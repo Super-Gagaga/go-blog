@@ -1,0 +1,61 @@
+# ==================== Go 构建产物 ====================
+# make build 输出的二进制文件 (bin/server)
+bin/
+dist/
+
+# 编译 / 交叉编译产物
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# 测试与覆盖率产物
+*.test
+*.out
+*.prof
+*.cover
+coverage.out
+coverage.txt
+
+# ==================== 环境变量与密钥 ====================
+.env
+.env.*
+!.env.example
+
+# 真实配置（含数据库密码、JWT 密钥等敏感信息，模板见 config.example.yaml）
+config.yaml
+
+# 本地配置覆盖
+config.local.yaml
+config.*.local.yaml
+
+# ==================== 运行时数据 ====================
+# 用户上传的图片 / 头像，不应纳入版本控制
+uploads/
+uploads/*
+!uploads/.gitkeep
+
+# 日志与临时目录
+*.log
+logs/
+tmp/
+temp/
+
+# ==================== 操作系统 / 编辑器 ====================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ==================== 其他 ====================
+# 编辑器 / 工具生成的计划文件
+.zcode/
+
+# 第三方依赖（本项目用 go modules，vendor 目录如存在亦忽略）
+vendor/

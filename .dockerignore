@@ -1,0 +1,14 @@
+.git
+.gitignore
+.vscode
+bin
+dist
+uploads
+deploy
+docs
+*.log
+.env
+.env.*
+config.yaml
+config.local.yaml
+config.*.local.yaml
