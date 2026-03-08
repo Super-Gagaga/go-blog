@@ -1,0 +1,45 @@
+# ==================== 配置模板 ====================
+# 使用方法:
+#   1. 复制本文件为 config.yaml:
+#        cp config.example.yaml config.yaml
+#   2. 按需填写真实的数据库、Redis、JWT 等信息。
+#
+# 说明:
+#   - config.yaml 已被 .gitignore 忽略, 请勿将真实密钥提交到版本库。
+#   - 运行时也可通过环境变量覆盖, 前缀为 GO_BLOG_ (下划线分隔),
+#     例如 GO_BLOG_DATABASE_PASSWORD / GO_BLOG_JWT_ACCESS_SECRET。
+
+app:
+  name: go-blog
+  host: 0.0.0.0
+  port: 8080
+  mode: debug            # 生产环境建议改为 release
+  read_timeout: 10s
+  write_timeout: 10s
+
+database:
+  driver: mysql
+  host: 127.0.0.1
+  port: 3306
+  username: root
+  password: "your-password"   # TODO: 改成真实数据库密码
+  database: go_blog
+  charset: utf8mb4
+  parse_time: true
+  loc: Local
+  max_idle_conns: 10
+  max_open_conns: 100
+  conn_max_lifetime: 1h
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  password: ""           # 无密码则留空
+  db: 0
+
+jwt:
+  access_secret: "your-access-secret"     # TODO: 改成随机长字符串
+  refresh_secret: "your-refresh-secret"   # TODO: 改成随机长字符串
+  access_ttl: 15m
+  refresh_ttl: 168h
+  issuer: go-blog
