@@ -1,3 +1,9 @@
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   app:
     build:
@@ -26,6 +32,7 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
+    logging: *default-logging
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:8080/health"]
       interval: 10s
@@ -36,6 +43,7 @@ services:
   mysql:
     image: mysql:8.4
     restart: unless-stopped
+    logging: *default-logging
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-go_blog}
@@ -59,6 +67,7 @@ services:
 
   redis:
     image: redis:7.4-alpine
+    logging: *default-logging
     restart: unless-stopped
     ports:
       - "127.0.0.1:${REDIS_PORT:-6379}:6379"
