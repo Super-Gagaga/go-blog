@@ -66,7 +66,8 @@ func (m *Manager) parseToken(tokenStr string, expectedType string, secret []byte
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		return secret, nil
-	}, jwt.WithIssuer(m.cfg.Issuer))
+		// 显式要求 exp:没有过期时间的令牌一律拒绝
+	}, jwt.WithIssuer(m.cfg.Issuer), jwt.WithExpirationRequired())
 	if err != nil {
 		return nil, err
 	}
