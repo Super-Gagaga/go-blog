@@ -10,6 +10,10 @@ import (
 
 var hyphenPattern = regexp.MustCompile(`-+`)
 
+// maxSlugRunes 截断上限:需同时满足 articles.slug VARCHAR(300)
+// 与 categories.slug VARCHAR(100)(随机后缀最长再占 7 字符)
+const maxSlugRunes = 64
+
 func Make(input string) string {
 	input = strings.ToLower(strings.TrimSpace(input))
 	var b strings.Builder
@@ -33,6 +37,9 @@ func Make(input string) string {
 
 	out := strings.Trim(b.String(), "-")
 	out = hyphenPattern.ReplaceAllString(out, "-")
+	if runes := []rune(out); len(runes) > maxSlugRunes {
+		out = strings.Trim(string(runes[:maxSlugRunes]), "-")
+	}
 	if out == "" {
 		out = "article"
 	}
