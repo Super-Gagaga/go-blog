@@ -5,6 +5,7 @@ import (
 
 	"github.com/yourname/go-blog/internal/model"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type LikeRepository struct {
@@ -40,10 +41,16 @@ func (r *LikeRepository) Toggle(userID, articleID int64) (bool, int64, error) {
 				UpdateColumn("like_count", gorm.Expr("like_count - ?", 1)).
 				Error
 		case errors.Is(err, gorm.ErrRecordNotFound):
-			if err := tx.Create(&model.Like{UserID: userID, ArticleID: articleID}).Error; err != nil {
-				return err
+			// 并发双击时复合主键冲突:忽略插入冲突并保持已赞,避免重复计数
+			result := tx.Clauses(clause.OnConflict{DoNothing: true}).
+				Create(&model.Like{UserID: userID, ArticleID: articleID})
+			if result.Error != nil {
+				return result.Error
 			}
 			liked = true
+			if result.RowsAffected == 0 {
+				return nil
+			}
 			return tx.Model(&model.Article{}).
 				Where("id = ?", articleID).
 				UpdateColumn("like_count", gorm.Expr("like_count + ?", 1)).
