@@ -1,0 +1,3 @@
+ALTER TABLE users
+    ADD COLUMN status VARCHAR(20) NOT NULL DEFAULT 'active' AFTER role,
+    ADD KEY idx_users_status (status);
