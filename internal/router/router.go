@@ -28,6 +28,12 @@ func New(cfg *config.Config, db *gorm.DB, redisClient *redis.Client, logger *zap
 	r.Use(middleware.TraceID())
 	r.Use(middleware.Logger(logger))
 	r.Use(middleware.CORS())
+
+	// /health 供 compose 健康检查轮询,必须先于全局限流注册,否则探针会持续消耗限流配额
+	r.GET("/health", func(c *gin.Context) {
+		app.Success(c, nil)
+	})
+
 	r.Use(middleware.RateLimit(redisClient, middleware.RateLimitConfig{
 		Prefix: "api",
 		Limit:  300,
@@ -115,9 +121,6 @@ func New(cfg *config.Config, db *gorm.DB, redisClient *redis.Client, logger *zap
 	recommendationHandler := handler.NewRecommendationHandler(recommendationService)
 	homeHandler := handler.NewHomeHandler(articleService, categoryService, recommendationService)
 
-	r.GET("/health", func(c *gin.Context) {
-		app.Success(c, nil)
-	})
 	r.GET("/swagger/index.html", func(c *gin.Context) {
 		app.SuccessMessage(c, "swagger docs are generated with `make swagger`", nil)
 	})
