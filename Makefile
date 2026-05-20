@@ -25,7 +25,7 @@ dev:
 	go run $(MAIN)
 
 test:
-	go test -v ./...
+	go test -race ./...
 
 lint:
 	golangci-lint run
