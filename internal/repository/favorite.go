@@ -5,7 +5,6 @@ import (
 
 	"github.com/yourname/go-blog/internal/model"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type FavoriteRepository struct {
@@ -28,36 +27,15 @@ func (r *FavoriteRepository) Exists(userID, articleID int64) (bool, error) {
 func (r *FavoriteRepository) Toggle(userID, articleID int64) (bool, error) {
 	var favorited bool
 	err := r.db.Transaction(func(tx *gorm.DB) error {
-		var favorite model.Favorite
-		err := tx.Where("user_id = ? AND article_id = ?", userID, articleID).First(&favorite).Error
-		switch {
-		case err == nil:
-			if err := tx.Delete(&favorite).Error; err != nil {
-				return err
-			}
-			favorited = false
-			return tx.Model(&model.Article{}).
-				Where("id = ? AND favorite_count > 0", articleID).
-				UpdateColumn("favorite_count", gorm.Expr("favorite_count - ?", 1)).
-				Error
-		case errors.Is(err, gorm.ErrRecordNotFound):
-			// 并发双击时复合主键冲突:忽略插入冲突并保持已收藏,避免重复计数
-			result := tx.Clauses(clause.OnConflict{DoNothing: true}).
-				Create(&model.Favorite{UserID: userID, ArticleID: articleID})
-			if result.Error != nil {
-				return result.Error
-			}
-			favorited = true
-			if result.RowsAffected == 0 {
-				return nil
-			}
-			return tx.Model(&model.Article{}).
-				Where("id = ?", articleID).
-				UpdateColumn("favorite_count", gorm.Expr("favorite_count + ?", 1)).
-				Error
-		default:
-			return err
-		}
+		var err error
+		favorited, err = toggleInteraction(
+			tx,
+			func() interface{} { return &model.Favorite{UserID: userID, ArticleID: articleID} },
+			"favorite_count",
+			userID,
+			articleID,
+		)
+		return err
 	})
 	return favorited, err
 }
