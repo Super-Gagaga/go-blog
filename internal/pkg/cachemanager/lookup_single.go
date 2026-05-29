@@ -33,7 +33,9 @@ func (sm *ServiceManager[T]) LookupSingle(
 		if err == nil {
 			var result T
 			if err := json.Unmarshal(val, &result); err != nil {
-				return nil, fmt.Errorf("redis lookup failed: %w", err)
+				// 损坏的缓存条目会一直毒到 TTL 到期:删除后按未命中处理
+				_ = rdb.Del(ctx, key).Err()
+				return nil, redis.Nil
 			}
 			return &result, nil
 		}
@@ -68,12 +70,12 @@ func (sm *ServiceManager[T]) LookupSingleWithFallback(
 	val, err := rdb.Get(ctx, key).Bytes()
 	if err == nil {
 		var result T
-		if err := json.Unmarshal(val, &result); err != nil {
-			return nil, fmt.Errorf("cache error: %w", err)
+		if err := json.Unmarshal(val, &result); err == nil {
+			return &result, nil
 		}
-		return &result, nil
-	}
-	if err != redis.Nil {
+		// 损坏的缓存条目会一直毒到 TTL 到期:删除后按未命中回源
+		_ = rdb.Del(ctx, key).Err()
+	} else if err != redis.Nil {
 		return nil, fmt.Errorf("cache error: %w", err)
 	}
 
