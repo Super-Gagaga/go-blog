@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Journal - 写作与阅读的安静角落</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Geist+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="/lib/phosphor-icons/index.js"></script>
+<script src="/js/theme.js"></script>
+<link rel="stylesheet" href="/css/page-common.css">
+<link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+<div class="shell">
+  <header class="search-area">
+    <a href="/" class="site-brand">Journal</a>
+    <form class="search-box" id="search-form">
+      <i class="ph ph-magnifying-glass"></i>
+      <input id="search-input" type="search" placeholder="搜索文章、作者或话题..." autocomplete="off">
+      <button class="search-submit" type="submit" aria-label="搜索"><i class="ph ph-arrow-right"></i></button>
+    </form>
+    <div class="search-actions">
+      <a href="#" data-filter="discover">首页</a>
+      <a href="#" data-nav="following">关注</a>
+      <a href="#" data-nav="notifications">消息</a>
+      <a href="#" data-nav="favorites">收藏</a>
+      <a href="#" data-nav="editor" class="btn-write"><i class="ph ph-pencil-simple"></i>写文章</a>
+    </div>
+    <div class="auth-area" id="auth-area">
+      <button class="btn-login" type="button" id="btn-login">登录</button>
+    </div>
+  </header>
+
+  <nav class="left-nav">
+    <div class="nav-section">
+      <div class="nav-label">浏览</div>
+      <ul class="nav-list">
+        <li class="active"><a href="#" data-sort="hot"><i class="ph ph-fire"></i>热门<span class="nav-count" id="article-total">0</span></a></li>
+        <li><a href="#" data-sort="latest"><i class="ph ph-clock-counter-clockwise"></i>最新</a></li>
+        <li><a href="#" data-sort="trend"><i class="ph ph-trend-up"></i>趋势</a></li>
+      </ul>
+    </div>
+    <hr class="nav-divider">
+    <div class="nav-section">
+      <div class="nav-label">专题</div>
+      <ul class="nav-list" id="category-nav"></ul>
+    </div>
+    <button class="theme-toggle" type="button" data-theme-toggle aria-pressed="false">
+      <i class="ph ph-moon"></i>
+      <span data-theme-label>夜间模式</span>
+    </button>
+  </nav>
+
+  <main class="main-content">
+    <div class="section-header">
+      <h1 class="section-title" id="section-title">热门推荐</h1>
+      <button class="section-more" id="load-more" type="button">加载更多</button>
+    </div>
+    <div class="feed-tabs" id="feed-tabs">
+      <button class="feed-tab active" type="button" data-category-id="">综合</button>
+    </div>
+    <div class="status-line" id="status-line">正在加载内容...</div>
+    <section id="featured"></section>
+    <div class="article-list" id="article-list"></div>
+  </main>
+
+  <aside class="right-aside">
+    <div class="aside-block">
+      <div class="aside-title">推荐作者</div>
+      <div id="author-list"></div>
+    </div>
+    <div class="aside-block">
+      <div class="aside-title">热门话题</div>
+      <div class="topic-list" id="topic-list"></div>
+    </div>
+    <div class="aside-block">
+      <div class="aside-title">本周精选</div>
+      <div id="digest-list"></div>
+    </div>
+    <div class="kbd-tip">按 <kbd>J</kbd> <kbd>K</kbd> 浏览文章</div>
+  </aside>
+</div>
+
+<div class="login-modal" id="login-modal" aria-hidden="true">
+  <div class="login-panel" role="dialog" aria-modal="true" aria-labelledby="login-title">
+    <button class="login-close" type="button" id="login-close" aria-label="关闭"><i class="ph ph-x"></i></button>
+    <h2 id="login-title">登录 Journal</h2>
+    <p class="login-subtitle" id="login-subtitle">使用邮箱和密码继续写作与阅读。</p>
+    <form id="login-form" class="login-form">
+      <label class="register-only">
+        <span>用户名</span>
+        <input type="text" id="register-username" autocomplete="username" minlength="3" maxlength="50">
+      </label>
+      <label>
+        <span>邮箱</span>
+        <input type="email" id="login-email" autocomplete="email" required>
+      </label>
+      <label>
+        <span>密码</span>
+        <input type="password" id="login-password" autocomplete="current-password" required>
+      </label>
+      <div class="login-error" id="login-error"></div>
+      <button class="login-submit" type="submit">登录</button>
+    </form>
+    <p class="auth-switch">
+      <span id="auth-switch-text">还没有账号？</span>
+      <button type="button" id="auth-mode-toggle">注册</button>
+    </p>
+  </div>
+</div>
+
+<script src="/js/index.js"></script>
+</body>
+</html>
