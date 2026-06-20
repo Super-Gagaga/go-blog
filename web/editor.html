@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>写文章 - Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Geist+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="/lib/phosphor-icons/index.js"></script>
+<script src="/js/theme.js"></script>
+<link rel="stylesheet" href="/css/page-common.css">
+<link rel="stylesheet" href="/css/editor.css">
+</head>
+<body>
+<div class="page-shell">
+<header class="topbar">
+  <a href="/" class="site-brand">Journal</a>
+  <nav class="topnav">
+    <a href="/">首页</a>
+    <a href="/following">关注</a>
+    <a href="/notifications">消息</a>
+    <button class="btn" id="save-draft" type="button"><i class="ph ph-floppy-disk"></i>存草稿</button>
+    <button class="btn primary" id="submit-review" type="button"><i class="ph ph-paper-plane-tilt"></i>提交审核</button>
+  </nav>
+</header>
+<main class="editor-layout">
+  <section class="editor-main">
+    <input id="title" class="title-input" maxlength="255" placeholder="文章标题">
+    <textarea id="content" class="content-input" placeholder="用 Markdown 写作。支持标题、列表、引用和代码块。"></textarea>
+  </section>
+  <aside class="editor-side">
+    <div id="status" class="status-line" hidden></div>
+    <section class="panel">
+      <h2 class="section-title">发布设置</h2>
+      <div class="form-grid">
+        <label class="field"><span>分类</span><select id="category" class="select"><option value="">不选择分类</option></select></label>
+        <label class="field"><span>标签</span><select id="tags" class="select" multiple size="6"></select></label>
+        <div class="field">
+          <span>封面图</span>
+          <input id="cover" type="hidden">
+          <div class="cover-picker" id="cover-picker">
+            <div class="cover-preview empty" id="cover-preview">暂未选择封面</div>
+            <button class="btn" id="open-cover-upload" type="button"><i class="ph ph-upload-simple"></i>上传封面</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="panel">
+      <h2 class="section-title">我的文章</h2>
+      <div class="filter-row">
+        <select id="article-status" class="select">
+          <option value="">全部状态</option>
+          <option value="draft">草稿</option>
+          <option value="pending_review">待审核</option>
+          <option value="published">已发布</option>
+          <option value="archived">已归档</option>
+        </select>
+        <button class="icon-btn" id="refresh-mine" title="刷新" type="button"><i class="ph ph-arrow-clockwise"></i></button>
+      </div>
+      <div id="my-articles" class="my-articles"></div>
+    </section>
+  </aside>
+</main>
+</div>
+<div class="upload-modal" id="cover-upload-modal" aria-hidden="true">
+  <div class="upload-panel" role="dialog" aria-modal="true" aria-labelledby="cover-upload-title">
+    <button class="icon-btn upload-close" id="cover-upload-close" type="button" aria-label="关闭"><i class="ph ph-x"></i></button>
+    <h2 class="section-title" id="cover-upload-title">上传封面</h2>
+    <div class="upload-dropzone" id="cover-dropzone">
+      <i class="ph ph-image-square"></i>
+      <strong>拖动图片到这里</strong>
+      <span>也可以拖动文件夹，系统会选择其中第一张图片作为封面</span>
+    </div>
+    <div class="upload-actions">
+      <button class="btn" id="choose-cover-file" type="button"><i class="ph ph-file-image"></i>选择图片</button>
+      <button class="btn" id="choose-cover-folder" type="button"><i class="ph ph-folder-open"></i>选择文件夹</button>
+    </div>
+    <input id="cover-file-input" type="file" accept="image/*" hidden>
+    <input id="cover-folder-input" type="file" accept="image/*" webkitdirectory directory multiple hidden>
+    <div class="upload-status" id="cover-upload-status"></div>
+  </div>
+</div>
+<script src="/js/editor.js"></script>
+</body>
+</html>
