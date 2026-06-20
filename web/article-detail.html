@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文章 - Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Geist+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="/lib/phosphor-icons/index.js"></script>
+<script src="/js/theme.js"></script>
+<link rel="stylesheet" href="/css/page-common.css">
+<link rel="stylesheet" href="/css/article-detail.css">
+</head>
+<body>
+<div class="page-shell">
+<header class="topbar">
+  <a href="/" class="site-brand">Journal</a>
+  <nav class="topnav">
+    <a href="/">首页</a>
+    <a href="/following">关注</a>
+    <a href="/notifications">消息</a>
+    <a href="/editor" class="btn primary"><i class="ph ph-pencil-simple"></i><span>写文章</span></a>
+  </nav>
+</header>
+<main class="container">
+  <div id="status" class="status-line">正在加载文章...</div>
+  <article class="article-shell" id="article" hidden></article>
+  <section class="comments-panel panel" id="comments-panel" hidden>
+    <div class="comments-head">
+      <h2 class="section-title">讨论</h2>
+      <span class="tiny" id="comment-count">0 条评论</span>
+    </div>
+    <form class="comment-form" id="comment-form">
+      <textarea class="textarea" id="comment-input" rows="3" maxlength="2000" placeholder="写下你的看法"></textarea>
+      <div class="actions">
+        <button class="btn primary" type="submit"><i class="ph ph-paper-plane-tilt"></i>发布评论</button>
+        <span class="tiny" id="comment-hint"></span>
+      </div>
+    </form>
+    <div class="comment-list" id="comment-list"></div>
+  </section>
+</main>
+</div>
+<script src="/js/article-detail.js"></script>
+</body>
+</html>
