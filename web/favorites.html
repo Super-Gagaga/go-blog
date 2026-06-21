@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的收藏 - Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Geist+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="/lib/phosphor-icons/index.js"></script>
+<script src="/js/theme.js"></script>
+<link rel="stylesheet" href="/css/page-common.css">
+<link rel="stylesheet" href="/css/favorites.css">
+</head>
+<body>
+<div class="page-shell">
+<header class="topbar">
+  <a href="/" class="site-brand">Journal</a>
+  <nav class="topnav">
+    <a href="/">首页</a>
+    <a href="/following">关注</a>
+    <a href="/notifications">消息</a>
+    <a href="/favorites" class="active">收藏</a>
+    <a href="/editor" class="btn primary"><i class="ph ph-pencil-simple"></i><span>写文章</span></a>
+  </nav>
+</header>
+<main class="container">
+  <section class="favorites-hero">
+    <h1 class="page-title">我的收藏</h1>
+  </section>
+  <div id="status" class="status-line" hidden></div>
+  <section id="favorites-list" class="article-list"></section>
+  <div id="pagination" class="pagination-bar"></div>
+</main>
+</div>
+<script src="/js/favorites.js"></script>
+</body>
+</html>
