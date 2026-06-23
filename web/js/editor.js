@@ -11,6 +11,40 @@ function showUploadStatus(msg, isError = false) {
   el.textContent = msg || '';
   el.classList.toggle('error', Boolean(isError));
 }
+
+// 本地草稿:输入防抖保存,误关页面后可恢复
+const DRAFT_KEY = () => `editor_draft_${editingID || 'new'}`;
+let draftTimer = null;
+function saveDraft() {
+  try {
+    localStorage.setItem(DRAFT_KEY(), JSON.stringify({
+      title: $('#title').value,
+      content: $('#content').value,
+      cover: $('#cover').value,
+      saved_at: Date.now()
+    }));
+  } catch { /* 存储满等异常时静默放弃草稿 */ }
+}
+function scheduleDraftSave() {
+  clearTimeout(draftTimer);
+  draftTimer = setTimeout(saveDraft, 500);
+}
+function restoreDraft() {
+  const raw = localStorage.getItem(DRAFT_KEY());
+  if (!raw) return;
+  try {
+    const draft = JSON.parse(raw);
+    if ($('#title').value === '' && $('#content').value === '') {
+      $('#title').value = draft.title || '';
+      $('#content').value = draft.content || '';
+      if (draft.cover) setCover(draft.cover);
+      show('已恢复上次未保存的本地草稿。');
+    }
+  } catch {
+    localStorage.removeItem(DRAFT_KEY());
+  }
+}
+function clearDraft() { localStorage.removeItem(DRAFT_KEY()); }
 async function api(path, options = {}) {
   if (!token()) throw new Error('请先登录后写作。');
   return apiRequest(token(), path, options);
@@ -81,6 +115,7 @@ function setCover(url) {
     preview.classList.add('empty');
     preview.textContent = '暂未选择封面';
   }
+  scheduleDraftSave();
 }
 function isImage(file) {
   return file && (file.type.startsWith('image/') || /\.(jpe?g|png|webp|gif)$/i.test(file.name || ''));
@@ -153,6 +188,7 @@ async function save(status) {
     const article = await api(path, { method, body: JSON.stringify(data) });
     editingID = article.id;
     history.replaceState(null, '', `/editor?id=${editingID}`);
+    clearDraft();
     show(status === 'published' ? '已提交审核。' : '草稿已保存。');
     loadMine();
   } catch (e) { show(e.message); }
@@ -191,6 +227,7 @@ async function loadMine() {
 }
 $('#save-draft').onclick = () => save('draft');
 $('#submit-review').onclick = () => save('published');
+['#title', '#content', '#cover'].forEach(sel => $(sel).addEventListener('input', scheduleDraftSave));
 $('#refresh-mine').onclick = loadMine;
 $('#article-status').onchange = loadMine;
 $('#open-cover-upload').onclick = openUploadModal;
@@ -230,5 +267,6 @@ document.addEventListener('keydown', event => {
   if (!token()) { show('请先从首页登录，再进入编辑器。'); return; }
   await loadOptions();
   await loadArticle();
+  if (!editingID) restoreDraft();
   await loadMine();
 })();
