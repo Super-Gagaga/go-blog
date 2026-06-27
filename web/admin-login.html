@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理员登录 — Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Geist+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="/lib/phosphor-icons/index.js"></script>
+<script src="/js/theme.js"></script>
+<link rel="stylesheet" href="/css/page-common.css">
+<style>
+  .page-shell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .login-card {
+    width: min(400px, calc(100% - 32px));
+    padding: 36px 32px 32px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+
+  .login-brand {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .login-brand a {
+    font-family: var(--font-serif);
+    font-size: 1.55rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    line-height: 1;
+  }
+  .login-brand p {
+    margin-top: 6px;
+    color: var(--text-tertiary);
+    font-size: 0.82rem;
+  }
+
+  .form-group { margin-bottom: 16px; }
+  .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--text-secondary);
+    font-size: 0.76rem;
+    font-weight: 600;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--canvas);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .form-group input:focus {
+    border-color: #c7c1b7;
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.03);
+  }
+
+  .login-error {
+    min-height: 20px;
+    margin-bottom: 12px;
+    color: var(--accent-red);
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  .login-submit {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    border: none;
+    border-radius: 6px;
+    background: var(--text-primary);
+    color: #fff;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 0.86rem;
+    font-weight: 500;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .login-submit:hover { background: #3d4348; }
+  :root[data-theme="dark"] .login-submit { color: #121416; }
+  :root[data-theme="dark"] .login-submit:hover { background: #ddd8ce; }
+  .login-submit:active { transform: scale(0.98); }
+  .login-submit:disabled { opacity: 0.6; cursor: default; }
+
+  .login-back {
+    display: block;
+    margin-top: 18px;
+    text-align: center;
+    color: var(--text-tertiary);
+    font-size: 0.82rem;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .login-back:hover { color: var(--text-primary); }
+
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="page-shell">
+  <div class="login-card">
+    <div class="login-brand">
+      <a href="/">Journal</a>
+      <p>管理员登录</p>
+    </div>
+    <form id="login-form">
+      <div class="form-group">
+        <label for="email">邮箱</label>
+        <input type="email" id="email" autocomplete="email" required autofocus>
+      </div>
+      <div class="form-group">
+        <label for="password">密码</label>
+        <input type="password" id="password" autocomplete="current-password" required>
+      </div>
+      <div class="login-error" id="login-error"></div>
+      <button class="login-submit" type="submit">登录管理后台</button>
+    </form>
+    <a href="/" class="login-back">← 返回首页</a>
+  </div>
+</div>
+
+<script>
+const API_BASE = '/api/v1';
+
+// 显示从 admin-console 重定向过来的错误
+const urlParams = new URLSearchParams(window.location.search);
+const redirectError = urlParams.get('error');
+if (redirectError) {
+  document.getElementById('login-error').textContent = decodeURIComponent(redirectError);
+}
+
+document.getElementById('login-form').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const submitBtn = document.querySelector('.login-submit');
+  const errorEl = document.getElementById('login-error');
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="spinner"></span>正在登录...';
+  errorEl.textContent = '';
+
+  try {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: document.getElementById('email').value.trim(),
+        password: document.getElementById('password').value
+      })
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok || body.code !== 0) {
+      throw new Error(body.message || '登录失败');
+    }
+
+    localStorage.setItem('jwt_token', body.data.access_token);
+    localStorage.setItem('refresh_token', body.data.refresh_token);
+
+    // 验证管理员权限
+    const profileRes = await fetch(`${API_BASE}/user/profile`, {
+      headers: { Authorization: `Bearer ${body.data.access_token}` }
+    });
+    const profileBody = await profileRes.json();
+    if (profileBody.code !== 0 || !profileBody.data || profileBody.data.role !== 'admin') {
+      localStorage.removeItem('jwt_token');
+      localStorage.removeItem('refresh_token');
+      throw new Error('此账号没有管理员权限，请使用管理员账号登录。');
+    }
+
+    // 跳转到管理后台
+    window.location.href = '/admin-console';
+  } catch (error) {
+    errorEl.textContent = error.message;
+    submitBtn.disabled = false;
+    submitBtn.textContent = '登录管理后台';
+  }
+});
+</script>
+</body>
+</html>
