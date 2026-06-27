@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理后台 - Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Geist+Mono:wght@400;500&family=Noto+Sans+SC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="/lib/phosphor-icons/index.js"></script>
+<script src="/js/theme.js"></script>
+<link rel="stylesheet" href="/css/page-common.css">
+<link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+<div class="page-shell">
+<header class="topbar admin-topbar">
+  <a href="/" class="site-brand">Journal</a>
+  <span class="chip orange">管理后台</span>
+  <nav class="topnav">
+    <a href="/"><i class="ph ph-house"></i><span>返回首页</span></a>
+    <button class="btn" id="logout" type="button"><i class="ph ph-sign-out"></i>退出</button>
+  </nav>
+</header>
+<main class="admin-shell">
+  <aside class="admin-nav">
+    <button class="admin-nav-item active" data-view="pending"><i class="ph ph-list-checks"></i>待审核 <span id="pending-badge">0</span></button>
+    <button class="admin-nav-item" data-view="dashboard"><i class="ph ph-chart-bar"></i>仪表盘</button>
+    <button class="admin-nav-item" data-view="articles"><i class="ph ph-newspaper"></i>文章管理</button>
+    <button class="admin-nav-item" data-view="comments"><i class="ph ph-chat-circle"></i>评论管理</button>
+    <button class="admin-nav-item" data-view="users"><i class="ph ph-users"></i>用户管理</button>
+    <button class="admin-nav-item" data-view="taxonomies"><i class="ph ph-tag"></i>分类标签</button>
+    <button class="admin-nav-item" data-view="audit"><i class="ph ph-scroll"></i>审计日志</button>
+  </aside>
+  <section class="admin-content">
+    <div class="admin-head">
+      <div>
+        <h1 class="section-title" id="view-title">待审核文章</h1>
+      </div>
+      <button class="icon-btn" id="refresh" type="button" title="刷新"><i class="ph ph-arrow-clockwise"></i></button>
+    </div>
+    <div id="status" class="status-line" hidden></div>
+    <div id="view"></div>
+  </section>
+</main>
+<dialog id="modal" class="admin-modal">
+  <form method="dialog" class="modal-panel">
+    <button class="icon-btn modal-close" value="cancel" type="submit"><i class="ph ph-x"></i></button>
+    <h2 class="section-title" id="modal-title">操作</h2>
+    <div id="modal-body"></div>
+  </form>
+</dialog>
+</div>
+<script src="/js/admin.js"></script>
+</body>
+</html>
