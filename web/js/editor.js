@@ -15,6 +15,7 @@ function showUploadStatus(msg, isError = false) {
 // 本地草稿:输入防抖保存,误关页面后可恢复
 const DRAFT_KEY = () => `editor_draft_${editingID || 'new'}`;
 let draftTimer = null;
+let dirty = false; // 有未保存改动时,离开页面前提醒
 function saveDraft() {
   try {
     localStorage.setItem(DRAFT_KEY(), JSON.stringify({
@@ -26,6 +27,7 @@ function saveDraft() {
   } catch { /* 存储满等异常时静默放弃草稿 */ }
 }
 function scheduleDraftSave() {
+  dirty = true;
   clearTimeout(draftTimer);
   draftTimer = setTimeout(saveDraft, 500);
 }
@@ -189,6 +191,7 @@ async function save(status) {
     editingID = article.id;
     history.replaceState(null, '', `/editor?id=${editingID}`);
     clearDraft();
+    dirty = false;
     show(status === 'published' ? '已提交审核。' : '草稿已保存。');
     loadMine();
   } catch (e) { show(e.message); }
@@ -262,6 +265,12 @@ $('#cover-dropzone').addEventListener('drop', async event => {
 });
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && $('#cover-upload-modal')?.classList.contains('visible')) closeUploadModal();
+});
+window.addEventListener('beforeunload', event => {
+  if (dirty) {
+    event.preventDefault();
+    event.returnValue = '';
+  }
 });
 (async function init() {
   if (!token()) { show('请先从首页登录，再进入编辑器。'); return; }
