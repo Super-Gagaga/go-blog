@@ -38,7 +38,7 @@ START TRANSACTION;
 
 -- ----------------------------------------------------------------------------
 -- 用户
--- 密码哈希值为 bcrypt(password123)。
+-- 密码哈希值为 bcrypt(123456)。
 -- article_count 统计已发布（status='published'）的文章数量。
 -- ----------------------------------------------------------------------------
 INSERT INTO users (
@@ -690,7 +690,7 @@ INSERT INTO notifications (id, user_id, type, content, is_read, created_at) VALU
         FALSE, '2026-06-22 07:55:46.000'
     ),
     (
-        5008, 1003, 'reply',
+        5008, 1002, 'reply',
         JSON_OBJECT('from_user_id', 1003, 'article_id', 2007, 'comment_id', 3009, 'parent_id', 3008,
                     'message', 'bob 回复了你在《Go 并发模式实战》下的评论'),
         TRUE, '2026-06-22 07:56:57.000'
