@@ -59,3 +59,4 @@ desktop.ini
 
 # 第三方依赖（本项目用 go modules，vendor 目录如存在亦忽略）
 vendor/
+.openbitfun/
